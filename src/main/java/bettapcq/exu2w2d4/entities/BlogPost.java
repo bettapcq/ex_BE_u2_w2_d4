@@ -17,15 +17,17 @@ public class BlogPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_post_id")
     private Long BlogPostid;
-
+    @Column(nullable = false)
     private String categoria;
+    @Column(nullable = false)
     private String titolo;
     private String cover;
+    @Column(nullable = false)
     private String contenuto;
     @Column(name = "min_di_lettura")
     private int minLettura;
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
 

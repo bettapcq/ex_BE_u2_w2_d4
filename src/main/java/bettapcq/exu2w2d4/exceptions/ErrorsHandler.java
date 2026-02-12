@@ -1,7 +1,7 @@
 package bettapcq.exu2w2d4.exceptions;
 
+import bettapcq.exu2w2d4.payloads.ErrorsDTO;
 import bettapcq.exu2w2d4.payloads.ErrorsListDTO;
-import bettapcq.exu2w2d4.payloads.ErrorsPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,22 +21,22 @@ public class ErrorsHandler {
 
     @ExceptionHandler(BadReqException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorsPayload handleBadReq(BadReqException ex) {
-        return new ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public ErrorsDTO handleBadReq(BadReqException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
     }
 
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorsPayload handleNotFound(NotFoundException ex) {
-        return new ErrorsPayload(ex.getMessage(), LocalDateTime.now());
+    public ErrorsDTO handleNotFound(NotFoundException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorsPayload handleGenericServerError(Exception ex) {
+    public ErrorsDTO handleGenericServerError(Exception ex) {
         ex.printStackTrace();
-        return new ErrorsPayload("C'è stato un errore, ripova più tardi", LocalDateTime.now());
+        return new ErrorsDTO("C'è stato un errore, ripova più tardi", LocalDateTime.now());
 
     }
 }
