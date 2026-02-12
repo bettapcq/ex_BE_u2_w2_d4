@@ -8,12 +8,18 @@ import bettapcq.exu2w2d4.payloads.NewBlogPostDTO;
 import bettapcq.exu2w2d4.payloads.UpdateBlogPostDTO;
 import bettapcq.exu2w2d4.repositories.AuthorsRepository;
 import bettapcq.exu2w2d4.repositories.BlogPostsRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -21,10 +27,13 @@ public class BlogPostsService {
 
     private final BlogPostsRepository blogPostsRepository;
     private final AuthorsRepository authorsRepository;
+    private final Cloudinary cloudinaryUploader;
 
-    public BlogPostsService(BlogPostsRepository blogPostsRepository, AuthorsRepository authorsRepository) {
+    public BlogPostsService(BlogPostsRepository blogPostsRepository, AuthorsRepository authorsRepository, Cloudinary cloudinaryUploader) {
         this.blogPostsRepository = blogPostsRepository;
         this.authorsRepository = authorsRepository;
+
+        this.cloudinaryUploader = cloudinaryUploader;
     }
 
     public Page<BlogPost> findAll(int page, int size, String orderBy) {
@@ -72,5 +81,24 @@ public class BlogPostsService {
         this.blogPostsRepository.delete(found);
     }
 
+    public BlogPost uploadBlogPostCover(MultipartFile file, Long blogPostId) {
+        BlogPost found = this.blogPostsRepository.findById(blogPostId).orElseThrow(() -> new NotFoundException(blogPostId));
 
+        try {
+
+            Map result = cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+
+            String imageUrl = (String) result.get("secure_url");
+
+            found.setCover(imageUrl);
+            log.info("La cover del blog con id " + blogPostId + " è stata aggiornata");
+            return found;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
+
+

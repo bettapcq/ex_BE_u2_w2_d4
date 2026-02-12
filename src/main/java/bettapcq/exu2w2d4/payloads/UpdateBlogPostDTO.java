@@ -1,7 +1,6 @@
 package bettapcq.exu2w2d4.payloads;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public record UpdateBlogPostDTO(String categoria,
@@ -10,10 +9,5 @@ public record UpdateBlogPostDTO(String categoria,
                                 @NotBlank(message = "Il post deve avere un contenuto")
                                 String contenuto,
                                 @PositiveOrZero(message = "Min di lettura non può essere un numero negativo")
-                                int minLettura,
-                                @Pattern(
-                                        regexp = "^(http|https)://.*$",
-                                        message = "L'URL deve iniziare con http:// o https://"
-                                )
-                                String cover) {
+                                int minLettura) {
 }

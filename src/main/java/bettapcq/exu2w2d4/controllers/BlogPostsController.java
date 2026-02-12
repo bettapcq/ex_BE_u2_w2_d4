@@ -1,21 +1,24 @@
 package bettapcq.exu2w2d4.controllers;
 
 import bettapcq.exu2w2d4.entities.BlogPost;
-import bettapcq.exu2w2d4.exceptions.MyValidationException;
+import bettapcq.exu2w2d4.exceptions.ValidationException;
 import bettapcq.exu2w2d4.payloads.NewBlogPostDTO;
 import bettapcq.exu2w2d4.payloads.UpdateBlogPostDTO;
 import bettapcq.exu2w2d4.services.BlogPostsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/blogposts")
+@Slf4j
 public class BlogPostsController {
 
     private final BlogPostsService blogPostsService;
@@ -42,7 +45,7 @@ public class BlogPostsController {
         if (valRes.hasErrors()) {
             List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
 
-            throw new MyValidationException(errorsList);
+            throw new ValidationException(errorsList);
         }
 
         return this.blogPostsService.addBlogPost(payload);
@@ -55,7 +58,7 @@ public class BlogPostsController {
         if (valRes.hasErrors()) {
             List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
 
-            throw new MyValidationException(errorsList);
+            throw new ValidationException(errorsList);
         }
 
         return this.blogPostsService.findByIdAndEdit(blogPostId, payload);
@@ -73,6 +76,12 @@ public class BlogPostsController {
     public void findByIdAndDelete(@PathVariable Long blogPostId) {
 
     }
+
+    //carica foto
+    @PatchMapping("/{blogPostId}/cover")
+    public BlogPost uploadImage(@RequestParam("cover_pic") MultipartFile file, @PathVariable Long blogPostId) {
+
+        return this.blogPostsService.uploadBlogPostCover(file, blogPostId);
+    }
+
 }
-
-

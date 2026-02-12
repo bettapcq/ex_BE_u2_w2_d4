@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ErrorsHandler {
 
-    @ExceptionHandler(MyValidationException.class)
+    @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorsListDTO handleValidationException(MyValidationException ex) {
+    public ErrorsListDTO handleValidationException(ValidationException ex) {
 
         return new ErrorsListDTO(ex.getMessage(), LocalDateTime.now(), ex.getErrorsMsg());
     }

@@ -1,7 +1,7 @@
 package bettapcq.exu2w2d4.controllers;
 
 import bettapcq.exu2w2d4.entities.Author;
-import bettapcq.exu2w2d4.exceptions.MyValidationException;
+import bettapcq.exu2w2d4.exceptions.ValidationException;
 import bettapcq.exu2w2d4.payloads.AuthorsDTO;
 import bettapcq.exu2w2d4.services.AuthorsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class AuthorsController {
         if (valRes.hasErrors()) {
             List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
 
-            throw new MyValidationException(errorsList);
+            throw new ValidationException(errorsList);
         }
 
         return this.authorsService.addAuthor(payload);
@@ -62,7 +62,7 @@ public class AuthorsController {
 
         if (valRes.hasErrors()) {
             List<String> errorsList = valRes.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
-            throw new MyValidationException(errorsList);
+            throw new ValidationException(errorsList);
 
         }
         return authorsService.findByIdAndEdit(authorId, payload);
@@ -74,4 +74,5 @@ public class AuthorsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findByIdAndDelete(@PathVariable Long authorId) {
     }
+
 }
