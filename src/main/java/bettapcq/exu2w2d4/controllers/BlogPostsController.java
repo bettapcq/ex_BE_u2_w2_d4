@@ -1,13 +1,18 @@
 package bettapcq.exu2w2d4.controllers;
 
 import bettapcq.exu2w2d4.entities.BlogPost;
+import bettapcq.exu2w2d4.exceptions.MyValidationException;
 import bettapcq.exu2w2d4.payloads.NewBlogPostDTO;
 import bettapcq.exu2w2d4.payloads.UpdateBlogPostDTO;
 import bettapcq.exu2w2d4.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/blogposts")
@@ -32,13 +37,27 @@ public class BlogPostsController {
     // post
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogPost addBlogPost(@RequestBody NewBlogPostDTO payload) {
+    public BlogPost addBlogPost(@RequestBody @Validated NewBlogPostDTO payload, BindingResult valRes) {
+
+        if (valRes.hasErrors()) {
+            List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
+
+            throw new MyValidationException(errorsList);
+        }
+
         return this.blogPostsService.addBlogPost(payload);
     }
 
     // put
     @PutMapping("/{blogPostId}")
-    public BlogPost editBlogPost(@PathVariable Long blogPostId, @RequestBody UpdateBlogPostDTO payload) {
+    public BlogPost editBlogPost(@PathVariable Long blogPostId, @RequestBody @Validated UpdateBlogPostDTO payload, BindingResult valRes) {
+
+        if (valRes.hasErrors()) {
+            List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
+
+            throw new MyValidationException(errorsList);
+        }
+
         return this.blogPostsService.findByIdAndEdit(blogPostId, payload);
     }
 

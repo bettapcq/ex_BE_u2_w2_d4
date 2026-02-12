@@ -1,10 +1,11 @@
 package bettapcq.exu2w2d4.controllers;
 
 import bettapcq.exu2w2d4.entities.Author;
+import bettapcq.exu2w2d4.exceptions.MyValidationException;
 import bettapcq.exu2w2d4.payloads.AuthorsDTO;
 import bettapcq.exu2w2d4.services.AuthorsService;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -37,16 +38,16 @@ public class AuthorsController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Author addAuthor(@RequestBody @Validated AuthorsDTO payload, BindingResult valRes) {
-        return this.authorsService.addAuthor(payload);
 
         if (valRes.hasErrors()) {
             List<String> errorsList = valRes.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
 
-            throw new ValidationException(errorsList);
-        } else {
-            return this.authorsService.addAuthor(payload);
-
+            throw new MyValidationException(errorsList);
         }
+
+        return this.authorsService.addAuthor(payload);
+
+
     }
 
     //get by id
@@ -57,13 +58,15 @@ public class AuthorsController {
 
     //put
     @PutMapping("/{authorId}")
-    public Author findByIdAndEdit(@RequestBody @Validated AuthorsDTO payload, @PathVariable Long authorId, BindingResult valRes) {
+    public Author findByIdAndEdit(@RequestBody @Validated AuthorsDTO payload, BindingResult valRes, @PathVariable Long authorId) {
 
         if (valRes.hasErrors()) {
+            List<String> errorsList = valRes.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            throw new MyValidationException(errorsList);
 
-        } else {
-            return authorsService.findByIdAndEdit(authorId, payload);
         }
+        return authorsService.findByIdAndEdit(authorId, payload);
+
     }
 
     // delete by id

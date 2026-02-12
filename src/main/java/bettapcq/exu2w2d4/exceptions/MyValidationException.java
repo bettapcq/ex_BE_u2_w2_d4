@@ -5,10 +5,10 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ValidationException extends RuntimeException {
+public class MyValidationException extends RuntimeException {
     private List<String> errorsMsg;
 
-    public ValidationException(List<String> errorsMsg) {
+    public MyValidationException(List<String> errorsMsg) {
 
         super("Il payload ha degli errori");
         this.errorsMsg = errorsMsg;
